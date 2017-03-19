@@ -2,7 +2,7 @@
   <div v-for="buff in buffs">
     <p>{{ buff }}</p>
   </div>
-  <button v-on:click="addBuff">Add Buff</button>
+  <button v-on:click="addBuff">ROLL THE BONES MATEY</button>
 </div>
 
 <!--<div id="roll-5">-->
@@ -15,18 +15,14 @@
 var newRoll = function generateRolls() {
   const BUFFS = ["Grand Melee", "Jolly Roger", "Buried Treasure","Broadsides", "Shark-infested Waters", "True Bearing"]
 
-  ret = []
-  for(let i = 0; i < BUFFS.length; i++) {
-    ret.push(BUFFS[Math.floor(Math.random() * 6)])
-  }
-  return ret
+  const roll = []
+  BUFFS.forEach(buff => roll.push(BUFFS[Math.floor(Math.random() * 6)]))
+  return roll
 }
 
-
-
-var frequencies = function findFrequencies(ary, classifier) {
+var frequencies = function findFrequencies(ary) {
   return ary.reduce(function(counter, item) {
-    var p = (classifier || String)(item);
+    let p = item;
     counter[p] = counter.hasOwnProperty(p) ? counter[p] + 1 : 1;
     return counter;
   }, {})
