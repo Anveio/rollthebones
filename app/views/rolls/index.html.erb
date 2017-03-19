@@ -1,0 +1,69 @@
+<div id="roll">
+  <div v-for="buff in buffs">
+    <p>{{ buff }}</p>
+  </div>
+  <button v-on:click="addBuff">Add Buff</button>
+</div>
+
+<!--<div id="roll-5">-->
+<!--  {{ message }}-->
+<!--  <button v-on:click="reverseMessage">Reverse Message</button>-->
+<!--</div>-->
+
+
+<script>
+var newRoll = function generateRolls() {
+  const BUFFS = ["Grand Melee", "Jolly Roger", "Buried Treasure","Broadsides", "Shark-infested Waters", "True Bearing"]
+
+  ret = []
+  for(let i = 0; i < BUFFS.length; i++) {
+    ret.push(BUFFS[Math.floor(Math.random() * 6)])
+  }
+  return ret
+}
+
+
+
+var frequencies = function findFrequencies(ary, classifier) {
+  return ary.reduce(function(counter, item) {
+    var p = (classifier || String)(item);
+    counter[p] = counter.hasOwnProperty(p) ? counter[p] + 1 : 1;
+    return counter;
+  }, {})
+}
+
+var modes = function findModes(histogram) {
+  ret = histogram
+  let mode = Math.max(...Object.values(ret))
+
+  Object.keys(ret).forEach(function(key){
+    if (ret[key] != mode) delete ret[key];
+  });
+  
+  return Object.keys(ret);
+}
+
+var roll = new Vue({
+  el: '#roll',
+  data: {
+    buffs: []
+  },
+    methods: {
+    addBuff: function () {
+      this.buffs = modes(frequencies(newRoll()))
+    }
+  },
+});
+
+var app5 = new Vue({
+  el: '#roll-5',
+  data: {
+    message: 'Hello Vue.js!'
+  },
+  methods: {
+    reverseMessage: function () {
+      this.message = this.message.split('').reverse().join('')
+    }
+  }
+})
+ </script>
