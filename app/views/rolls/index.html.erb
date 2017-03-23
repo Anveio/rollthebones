@@ -1,27 +1,36 @@
-<div id="roll">
-  <div v-for="buff in buffs">
-    <p>{{ buff }}</p>
+<section class="jumbotron">
+  <div class="flex-container">
+    <h1 id="site-title">Roll the Bones</h1>
   </div>
-  <button v-on:click="addBuff">ROLL THE BONES MATEY</button>
+</section>
+
+<div class='flex-container'>
+  <div id="roll">
+    <div class='buff-container'>
+      <ul class="buff-list">
+        <buff-icon v-for="buff in buffs" v-bind:icon="buff" v-bind:class="buff" class="buff-icon"></buff-icon>
+        <!--<li v-for="buff in buffs" v-bind:class="buff"> {{ buff }}</li>-->
+      </ul>
+    </div>
+    <div class='button-container'>
+      <button class="round-button" v-on:click="addBuff"></button>
+    </div>
+  </div>
 </div>
 
-<!--<div id="roll-5">-->
-<!--  {{ message }}-->
-<!--  <button v-on:click="reverseMessage">Reverse Message</button>-->
-<!--</div>-->
-
+<button-rb></button-rb>
 
 <script>
-var newRoll = function generateRolls() {
-  const BUFFS = ["Grand Melee", "Jolly Roger", "Buried Treasure","Broadsides", "Shark-infested Waters", "True Bearing"]
+const BUFFS = ["Grand Melee", "Jolly Roger", "Buried Treasure", "Broadsides", "Shark-infested Waters", "True Bearing"]
 
+var newRoll = function generateRolls() {
   const roll = []
-  BUFFS.forEach(buff => roll.push(BUFFS[Math.floor(Math.random() * 6)]))
+  BUFFS.forEach(buff => roll.push(BUFFS[Math.floor(Math.random() * BUFFS.length)]))
   return roll
 }
 
 var frequencies = function findFrequencies(ary) {
-  return ary.reduce(function(counter, item) {
+  return ary.reduce((counter, item) => {
     let p = item;
     counter[p] = counter.hasOwnProperty(p) ? counter[p] + 1 : 1;
     return counter;
@@ -32,11 +41,47 @@ var modes = function findModes(histogram) {
   ret = histogram
   let mode = Math.max(...Object.values(ret))
 
-  Object.keys(ret).forEach(function(key){
+  Object.keys(ret).forEach(key => {
     if (ret[key] != mode) delete ret[key];
   });
   
   return Object.keys(ret);
+}
+
+var formatted_as_css_class = function format_as_css_class(arr) {
+  return arr.map(element => {
+    return element.replace(" ", "-").toLowerCase();
+  })
+}
+
+var sorted_array_of_buffs = function sort_array_of_buffs(arr) {
+  return arr.sort()
+}
+
+Vue.component('buff-icon', {
+  props: ['icon'],
+  template: '<li>{{ }}</li>'
+})
+
+
+
+Vue.component('determine-buff-icon', {
+  props: ['icon'],
+  data: function() {
+    return this.icon.replace(" ", "-").toLowerCase()
+  }
+})
+
+Vue.component('button-rtb'), {
+  template: '<button v-on:click="roll"></button>',
+  data: {
+    buffs: []
+  },
+  methods: {
+    roll: function() {
+      this.buffs = modes(frequencies(newRoll()))
+    }
+  }
 }
 
 var roll = new Vue({
@@ -46,20 +91,8 @@ var roll = new Vue({
   },
     methods: {
     addBuff: function () {
-      this.buffs = modes(frequencies(newRoll()))
+      this.buffs = sorted_array_of_buffs(formatted_as_css_class(modes(frequencies(newRoll()))))
     }
   },
 });
-
-var app5 = new Vue({
-  el: '#roll-5',
-  data: {
-    message: 'Hello Vue.js!'
-  },
-  methods: {
-    reverseMessage: function () {
-      this.message = this.message.split('').reverse().join('')
-    }
-  }
-})
  </script>
