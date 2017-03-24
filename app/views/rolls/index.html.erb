@@ -5,26 +5,28 @@
 </section>
 
 <div class='flex-container'>
-  <div id="roll">
-    <div class='buff-container'>
-      <ul class="buff-list">
-        <buff-icon v-for="buff in buffs" v-bind:icon="buff" v-bind:class="buff" class="buff-icon"></buff-icon>
-        <!--<li v-for="buff in buffs" v-bind:class="buff"> {{ buff }}</li>-->
-      </ul>
-    </div>
+  <div id="roll-history">
     <div class='button-container'>
       <button class="round-button" v-on:click="addBuff"></button>
     </div>
+    <ul v-for="roll in rolls" class="roll-list">
+      <ul v-for="buff in roll" class="buff-list"> 
+        <buff-icon v-bind:presence="buff" v-bind:class="buff" class="buff-icon"></buff-icon>
+      </ul>
+    </ul>
+    <!--<div class='buff-container'>-->
+    <!--  <ul class="buff-list">-->
+    <!--    <buff-icon v-for="roll in rolls" v-bind:icon="roll" v-bind:class="roll" class="buff-icon"></buff-icon>-->
+    <!--  </ul>-->
+    <!--</div>-->
   </div>
 </div>
 
-<button-rb></button-rb>
-
 <script>
-const BUFFS = ["Grand Melee", "Jolly Roger", "Buried Treasure", "Broadsides", "Shark-infested Waters", "True Bearing"]
+const BUFFS = ["Grand Melee", "Jolly Roger", "Buried Treasure", "Broadsides", "Shark Infested Waters", "True Bearing"]
 
 var newRoll = function generateRolls() {
-  const roll = []
+  let roll = []
   BUFFS.forEach(buff => roll.push(BUFFS[Math.floor(Math.random() * BUFFS.length)]))
   return roll
 }
@@ -48,9 +50,15 @@ var modes = function findModes(histogram) {
   return Object.keys(ret);
 }
 
-var formatted_as_css_class = function format_as_css_class(arr) {
+var formattedAsKebabCase = function formatAsKebabCase(arr) {
   return arr.map(element => {
-    return element.replace(" ", "-").toLowerCase();
+    return element.split(" ").join("-").toLowerCase();
+  })
+}
+
+var formattedAsSnakeCase = function formatAsSnakeCase(arr) {
+  return arr.map(element => {
+    return element.split(" ").join("_").toLowerCase();
   })
 }
 
@@ -58,41 +66,73 @@ var sorted_array_of_buffs = function sort_array_of_buffs(arr) {
   return arr.sort()
 }
 
-Vue.component('buff-icon', {
-  props: ['icon'],
-  template: '<li>{{ }}</li>'
-})
-
-
-
-Vue.component('determine-buff-icon', {
-  props: ['icon'],
-  data: function() {
-    return this.icon.replace(" ", "-").toLowerCase()
+var calculated_buffs = function calculate_buffs() {
+  let roll = { 
+    grand_melee: null,
+    buried_treasure: null,
+    jolly_roger: null,
+    broadsides: null,
+    shark_infested_waters: null,
+    true_bearing: null
   }
-})
-
-Vue.component('button-rtb'), {
-  template: '<button v-on:click="roll"></button>',
-  data: {
-    buffs: []
-  },
-  methods: {
-    roll: function() {
-      this.buffs = modes(frequencies(newRoll()))
-    }
-  }
+  let buffs = formattedAsSnakeCase(modes(frequencies(newRoll())))
+  
+  
+  Object.keys(roll).forEach(key => {
+    if (buffs.includes(key)) roll[key] = true;
+  });
+  
+  return roll
 }
 
-var roll = new Vue({
-  el: '#roll',
+Vue.component('buff-icon', {
+  props: ['presence'],
+  template: '<li>{{ presence }}</li>'
+})
+
+Vue.component('roll-display', {
+  template: '<div></div>'
+})
+
+
+var rollHistory = new Vue({
+  el: '#roll-history',
   data: {
-    buffs: []
+    rolls: [null, null, null, null, null],
+    counter: 0
   },
     methods: {
     addBuff: function () {
-      this.buffs = sorted_array_of_buffs(formatted_as_css_class(modes(frequencies(newRoll()))))
+      this.rolls.push(calculated_buffs()) 
+      this.rolls.splice(0,1)
+      this.counter += 1;
     }
   },
 });
+
+// Vue.component('counter-display', {
+//   props: [counter],
+//   template: '<p>{{ counter }}</p>'
+// })
+
+
+
+// Vue.component('determine-buff-icon', {
+//   props: ['icon'],
+//   data: function() {
+//     return this.icon.replace(" ", "-").toLowerCase()
+//   }
+// })
+
+// Vue.component('button-rtb'), {
+//   template: '<button v-on:click="roll"></button>',
+//   data: {
+//     buffs: []
+//   },
+//   methods: {
+//     roll: function() {
+//       this.buffs = modes(frequencies(newRoll()))
+//     }
+//   }
+// }
  </script>
