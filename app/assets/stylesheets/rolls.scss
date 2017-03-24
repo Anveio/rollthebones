@@ -38,10 +38,10 @@ h1 {
     flex: 1;
 }
 
-.buff-list {
+.buff-list-item {
     display: flex;
     align-items: center;
-    max-width: 400px;
+    max-width: 350px;
     flex-direction: row;
     flex: 1;
     justify-content: space-between;
@@ -50,57 +50,60 @@ h1 {
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-    padding: 0 0 20px;
-    margin: 0
+    margin: 0 5px 0 0;
 }
-
-
+.buff-list-item:last-child {
+    margin-right: 0;
+}
 
 .roll-list {
     display: flex;
     align-items: center;
-    max-width: 400px;
-    flex: 1;
     justify-content: space-between;
     list-style-type: none;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-    padding: 0 0 20px;
-    margin: 0
+    padding: 0;
+    margin: 0 0 15px 0;
+
 }
 
 
 .buff-icon {
     width: 50px;
     height: 50px;
-    
-    // // Hide the Text    
-    // text-indent: 100%;
-    // white-space: nowrap;
-    // overflow: hidden;
+    border: 0;
+    background-color: black;
+    opacity: 0.3;
 }
 
+
+
 .broadsides {
-    width: 50px;
-    height: 50px;
+    opacity: 1;
     background: url('broadsides.jpg') center;
 }
 
 .buried-treasure {
+    opacity: 1;
     background: url('buried_treasure.jpg') center;
 }
 .grand-melee {
+    opacity: 1;
     background: url('grand_melee.jpg') center;
 }
 .jolly-roger {
+    opacity: 1;
     background: url('jolly_roger.jpg') center;
 }
 .shark-infested-waters {
+    opacity: 1;
     background: url('shark_infested_waters.jpg') center;
 }
 .true-bearing {
+    opacity: 1;
     background: url('true_bearing.jpg') center;
 }
 

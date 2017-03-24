@@ -9,16 +9,13 @@
     <div class='button-container'>
       <button class="round-button" v-on:click="addBuff"></button>
     </div>
-    <ul v-for="roll in rolls" class="roll-list">
-      <ul v-for="buff in roll" class="buff-list"> 
-        <buff-icon v-bind:presence="buff" v-bind:class="buff" class="buff-icon"></buff-icon>
+    <div class='container'>
+      <ul v-for="roll in rolls" class="roll-list">
+        <li v-for="buff in roll" class="buff-list-item"> 
+          <buff-icon v-bind:iconClass="buff" v-bind:class="buff" class="buff-icon"></buff-icon>
+        </li>
       </ul>
-    </ul>
-    <!--<div class='buff-container'>-->
-    <!--  <ul class="buff-list">-->
-    <!--    <buff-icon v-for="roll in rolls" v-bind:icon="roll" v-bind:class="roll" class="buff-icon"></buff-icon>-->
-    <!--  </ul>-->
-    <!--</div>-->
+    </div>
   </div>
 </div>
 
@@ -50,36 +47,12 @@ var modes = function findModes(histogram) {
   return Object.keys(ret);
 }
 
-var formattedAsKebabCase = (str) => str.split("_").join("-").toLowerCase();
-var formattedAsSnakeCase = (str) => str.split(" ").join("_").toLowerCase();
-
-var sorted_array_of_buffs = function sort_array_of_buffs(arr) {
-  return arr.sort()
-}
-
-var calculated_buffs = function calculate_buffs() {
-  let roll = { 
-    grand_melee: null,
-    buried_treasure: null,
-    jolly_roger: null,
-    broadsides: null,
-    shark_infested_waters: null,
-    true_bearing: null
-  }
-  let buffs = (modes(frequencies(newRoll())))
-  buffs = buffs.map(el => formattedAsSnakeCase(el))
-  
-  debugger;
-  Object.keys(roll).forEach(key => {
-    if (buffs.includes(key)) roll[key] = formattedAsKebabCase(key);
-  });
-  
-  return roll
-}
+var formatAsSnakeCase = (str) => str.split(/_| |-/).join("_").toLowerCase();
+var formatAsKebabCase = (str) => str.split(/_| |-/).join("-").toLowerCase();
 
 Vue.component('buff-icon', {
-  props: ['presence'],
-  template: '<li>{{ }}</li>'
+  props: ['iconClass'],
+  template: '<div>{{ }}</div>'
 })
 
 Vue.component('roll-display', {
@@ -90,15 +63,34 @@ Vue.component('roll-display', {
 var rollHistory = new Vue({
   el: '#roll-history',
   data: {
-    rolls: [null, null, null, null, null],
+    rolls: [],
     counter: 0
   },
     methods: {
-    addBuff: function () {
-      this.rolls.push(calculated_buffs()) 
-      this.rolls.splice(0,1)
-      this.counter += 1;
-    }
+      addBuff: function () {
+        this.rolls.unshift(this.generateRoll()) 
+        this.rolls.splice(5,1) // Display 5 rows.
+        this.counter += 1;
+      },
+      generateRoll: function() {
+          let roll = {
+            // The order of these properties determines the order they are displayed.
+            grand_melee: null,
+            buried_treasure: null,
+            jolly_roger: null,
+            broadsides: null,
+            shark_infested_waters: null,
+            true_bearing: null
+          }
+          let buffs = (modes(frequencies(newRoll())))
+          buffs = buffs.map(el => formatAsSnakeCase(el))
+          
+          Object.keys(roll).forEach(key => {
+            if (buffs.includes(key)) roll[key] = formatAsKebabCase(key);
+          });
+          
+          return roll
+      }
   },
 });
 
