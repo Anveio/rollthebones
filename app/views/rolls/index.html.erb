@@ -23,11 +23,11 @@
 </div>
 
 <script>
-const BUFFS = ["Grand Melee", "Jolly Roger", "Buried Treasure", "Broadsides", "Shark Infested Waters", "True Bearing"]
+const BUFFS_ARRAY = ["Grand Melee", "Jolly Roger", "Buried Treasure", "Broadsides", "Shark Infested Waters", "True Bearing"]
 
 var newRoll = function generateRolls() {
   let roll = []
-  BUFFS.forEach(buff => roll.push(BUFFS[Math.floor(Math.random() * BUFFS.length)]))
+  BUFFS_ARRAY.forEach(buff => roll.push(BUFFS_ARRAY[Math.floor(Math.random() * BUFFS_ARRAY.length)]))
   return roll
 }
 
@@ -50,17 +50,8 @@ var modes = function findModes(histogram) {
   return Object.keys(ret);
 }
 
-var formattedAsKebabCase = function formatAsKebabCase(arr) {
-  return arr.map(element => {
-    return element.split(" ").join("-").toLowerCase();
-  })
-}
-
-var formattedAsSnakeCase = function formatAsSnakeCase(arr) {
-  return arr.map(element => {
-    return element.split(" ").join("_").toLowerCase();
-  })
-}
+var formattedAsKebabCase = (str) => str.split("_").join("-").toLowerCase();
+var formattedAsSnakeCase = (str) => str.split(" ").join("_").toLowerCase();
 
 var sorted_array_of_buffs = function sort_array_of_buffs(arr) {
   return arr.sort()
@@ -75,11 +66,12 @@ var calculated_buffs = function calculate_buffs() {
     shark_infested_waters: null,
     true_bearing: null
   }
-  let buffs = formattedAsSnakeCase(modes(frequencies(newRoll())))
+  let buffs = (modes(frequencies(newRoll())))
+  buffs = buffs.map(el => formattedAsSnakeCase(el))
   
-  
+  debugger;
   Object.keys(roll).forEach(key => {
-    if (buffs.includes(key)) roll[key] = true;
+    if (buffs.includes(key)) roll[key] = formattedAsKebabCase(key);
   });
   
   return roll
@@ -87,7 +79,7 @@ var calculated_buffs = function calculate_buffs() {
 
 Vue.component('buff-icon', {
   props: ['presence'],
-  template: '<li>{{ presence }}</li>'
+  template: '<li>{{ }}</li>'
 })
 
 Vue.component('roll-display', {
@@ -109,6 +101,16 @@ var rollHistory = new Vue({
     }
   },
 });
+
+// var formattedAsSnakeCase = function formatAsSnakeCase(str) {
+//   return str.split(" ").join("_").toLowerCase();
+// }
+
+// var formattedAsKebabCase = function formatAsKebabCase(arr) {
+//   return arr.map(element => {
+//     return element.split("_").join("-").toLowerCase();
+//   })
+// }
 
 // Vue.component('counter-display', {
 //   props: [counter],
