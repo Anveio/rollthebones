@@ -19,7 +19,6 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
     padding-bottom: 50px;
     background-color: grey;
     flex: 1;
@@ -29,6 +28,10 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.rolls-container {
+    min-height: 450px;
 }
 
 .buff-container {
@@ -66,7 +69,7 @@ h1 {
     -o-background-size: cover;
     background-size: cover;
     padding: 0;
-    margin: 0 0 15px 0;
+    margin: 0 0 25px 0;
 
 }
 
@@ -76,10 +79,8 @@ h1 {
     height: 50px;
     border: 0;
     background-color: black;
-    opacity: 0.3;
+    opacity: 0.1;
 }
-
-
 
 .broadsides {
     opacity: 1;
@@ -128,37 +129,25 @@ h1 {
   padding: 0;
 }
 
-.round-button {
+.rtb-button {
     display:block;
+    opacity: 0.8;
     width:100px;
     height:100px;
     line-height:50px;
     border: 5px solid #028482;
     border-radius: 50%;
-    padding: 50px;
+    // padding: 50px;
     margin-bottom: 25px;
     color:#f5f5f5;
     background: url('rollthebones.jpg') center no-repeat;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
     background-size: cover;
-    box-shadow: 0 0 3px gray;
+    box-shadow: -3px 0 3px gray;
     &:hover {
-        transform: scale(1.05);
-    }&:active {
-        transform: scale(0.95);
+        transform: scale(1.1);
+        opacity: 1;
+    }&:disabled {
+        transform: scale(1);
+        opacity: 0.3;
     }
 }
-.round-button:hover {
-    // background: #262626;
-}
-
-// .btn-circle.btn-xl {
-//   width: 70px;
-//   height: 70px;
-//   padding: 10px 16px;
-//   font-size: 24px;
-//   line-height: 1.33;
-//   border-radius: 35px;
-// }

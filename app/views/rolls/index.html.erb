@@ -7,12 +7,12 @@
 <div class='flex-container'>
   <div id="roll-history">
     <div class='button-container'>
-      <button class="round-button" v-on:click="addBuff"></button>
+      <button class="rtb-button" v-on:click="addBuff" :disabled="disabled"></button>
     </div>
-    <div class='container'>
-      <ul v-for="roll in rolls" class="roll-list">
+    <div class='rolls-container'>
+      <ul v-for="(roll, index) in rolls" class="roll-list" :id="index">
         <li v-for="buff in roll" class="buff-list-item"> 
-          <buff-icon v-bind:iconClass="buff" v-bind:class="buff" class="buff-icon"></buff-icon>
+          <div :class="buff" class="buff-icon"></div>
         </li>
       </ul>
     </div>
@@ -22,77 +22,97 @@
 <script>
 const BUFFS_ARRAY = ["Grand Melee", "Jolly Roger", "Buried Treasure", "Broadsides", "Shark Infested Waters", "True Bearing"]
 
-var newRoll = function generateRolls() {
-  let roll = []
-  BUFFS_ARRAY.forEach(buff => roll.push(BUFFS_ARRAY[Math.floor(Math.random() * BUFFS_ARRAY.length)]))
-  return roll
-}
-
-var frequencies = function findFrequencies(ary) {
-  return ary.reduce((counter, item) => {
-    let p = item;
-    counter[p] = counter.hasOwnProperty(p) ? counter[p] + 1 : 1;
-    return counter;
-  }, {})
-}
-
-var modes = function findModes(histogram) {
-  ret = histogram
-  let mode = Math.max(...Object.values(ret))
-
-  Object.keys(ret).forEach(key => {
-    if (ret[key] != mode) delete ret[key];
-  });
-  
-  return Object.keys(ret);
-}
-
-var formatAsSnakeCase = (str) => str.split(/_| |-/).join("_").toLowerCase();
-var formatAsKebabCase = (str) => str.split(/_| |-/).join("-").toLowerCase();
-
-Vue.component('buff-icon', {
-  props: ['iconClass'],
-  template: '<div>{{ }}</div>'
-})
-
-Vue.component('roll-display', {
-  template: '<div></div>'
-})
-
+const formatAsSnakeCase = (str) => str.split(/ |-/).join("_").toLowerCase();
+const formatAsKebabCase = (str) => str.split(/_| /).join("-").toLowerCase();
 
 var rollHistory = new Vue({
   el: '#roll-history',
   data: {
     rolls: [],
-    counter: 0
+    counter: 0,
+    audio: document.getElementById('rtb-audio'),
+    disabled: false
   },
     methods: {
       addBuff: function () {
-        this.rolls.unshift(this.generateRoll()) 
-        this.rolls.splice(5,1) // Display 5 rows.
+        // Play Sound
+        this.audio.volume = 0.05;
+        this.audio.currentTime = 0;
+        this.audio.play();
+        
+        // Important data manipulation
+        this.rolls.unshift(this.generateRoll()); // Newest roll is at the beginning of rolls array.
+        this.rolls.splice(5); // Display only 5 rows.
         this.counter += 1;
+        
+        // Cooldown on button
+        this.disabled = true;
+        setTimeout(() => {
+          this.disabled = false;
+        }, 1000)
+      },
+      rawRoll: function() {
+        // Samples from BUFFS_ARRAY six times into a new array.
+        return BUFFS_ARRAY.map(element => BUFFS_ARRAY[Math.floor(Math.random() * BUFFS_ARRAY.length)])
+      },
+      findFrequencies: function(ary) {
+        return ary.reduce((counter, item) => {
+        let p = item;
+        counter[p] = counter.hasOwnProperty(p) ? counter[p] + 1 : 1;
+        return counter;
+        }, {})
+      },
+      findModes: function(histogram) {
+        const mode = Math.max(...Object.values(histogram))
+        return Object.keys(histogram).filter(el => histogram[el] == mode)
       },
       generateRoll: function() {
-          let roll = {
-            // The order of these properties determines the order they are displayed.
-            grand_melee: null,
-            buried_treasure: null,
-            jolly_roger: null,
-            broadsides: null,
-            shark_infested_waters: null,
-            true_bearing: null
-          }
-          let buffs = (modes(frequencies(newRoll())))
-          buffs = buffs.map(el => formatAsSnakeCase(el))
-          
-          Object.keys(roll).forEach(key => {
-            if (buffs.includes(key)) roll[key] = formatAsKebabCase(key);
-          });
-          
-          return roll
+        let roll = {
+          // The order of these properties determines the order they are displayed.
+          grand_melee: null,
+          buried_treasure: null,
+          jolly_roger: null,
+          broadsides: null,
+          shark_infested_waters: null,
+          true_bearing: null
+        }
+        
+        let buffs = (this.findModes(this.findFrequencies(this.rawRoll())));
+        buffs = buffs.map(el => formatAsSnakeCase(el));
+        
+        // The value of the keys, if found, will become kebab case
+        // The value will bind to the class of the div they are in, displaying the corresponding image.
+        buffs.map(el => roll[el] = formatAsKebabCase(el));
+        
+        return roll;
       }
-  },
+    },
 });
+
+var controller = new ScrollMagic.Controller();
+
+var scene = new ScrollMagic.Scene({ triggerElement: '#roll-history' }).setTween("#roll-history", 0.5, { opacity: 1, scale: 2.5}).addTo(controller)
+
+          
+// const newRoll = () => BUFFS_ARRAY.map(element => BUFFS_ARRAY[Math.floor(Math.random() * BUFFS_ARRAY.length)])
+
+// Vue.component('buff-icon', {
+//   props: ['iconClass'],
+//   template: '<div>{{ }}</div>'
+// })
+
+// const frequencies = function findFrequencies(ary) {
+//   return ary.reduce((counter, item) => {
+//     let p = item;
+//     counter[p] = counter.hasOwnProperty(p) ? counter[p] + 1 : 1;
+//     return counter;
+//   }, {})
+// }
+
+// const modes = function findModes(histogram) {
+//   const mode = Math.max(...Object.values(histogram))
+//   return Object.keys(histogram).filter(el => histogram[el] == mode)
+// }
 
 // var formattedAsSnakeCase = function formatAsSnakeCase(str) {
 //   return str.split(" ").join("_").toLowerCase();
@@ -109,7 +129,16 @@ var rollHistory = new Vue({
 //   template: '<p>{{ counter }}</p>'
 // })
 
+// var modes = function findModes(histogram) {
+//   let ret = histogram
+//   let mode = Math.max(...Object.values(ret))
 
+//   Object.keys(ret).forEach(key => {
+//     if (ret[key] != mode) delete ret[key];
+//   });
+  
+//   return Object.keys(ret);
+// }
 
 // Vue.component('determine-buff-icon', {
 //   props: ['icon'],
@@ -129,4 +158,20 @@ var rollHistory = new Vue({
 //     }
 //   }
 // }
+
+// var newRoll = function generateRolls() {
+//   let roll = [];
+//   BUFFS_ARRAY.forEach(buff => roll.push(BUFFS_ARRAY[Math.floor(Math.random() * BUFFS_ARRAY.length)]));
+//   return roll;
+// }
+
+// var newRoll = function generateRoll() {
+//   return BUFFS_ARRAY.map(element => BUFFS_ARRAY[Math.floor(Math.random() * BUFFS_ARRAY.length)])
+// }
+
+// var buffIcon = {
+//   props: ['iconClass'],
+//   template: '<div></div>'
+// }
  </script>
+ <!--<buff-icon :iconClass="buff" :class="buff" class="buff-icon"></buff-icon>-->
