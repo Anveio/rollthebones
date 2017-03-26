@@ -7,7 +7,7 @@
 <div class='flex-container'>
   <div id="roll-history">
     <div class='button-container'>
-      <button class="rtb-button" v-on:click="addBuff" :disabled="disabled"></button>
+      <button class="rtb-button" v-on:click="addBuff" :disabled="disabled"><audio src="/audios/roll_the_bones.ogg" id="rtb-audio"></audio></button>
     </div>
     <div class='rolls-container'>
       <ul v-for="(roll, index) in rolls" class="roll-list" :id="index">
@@ -15,6 +15,7 @@
           <div :class="buff" class="buff-icon"></div>
         </li>
       </ul>
+      <div v-for="grade in grades">{{ grade }}</div>
     </div>
   </div>
 </div>
@@ -25,10 +26,46 @@ const BUFFS_ARRAY = ["Grand Melee", "Jolly Roger", "Buried Treasure", "Broadside
 const formatAsSnakeCase = (str) => str.split(/ |-/).join("_").toLowerCase();
 const formatAsKebabCase = (str) => str.split(/_| /).join("-").toLowerCase();
 
+// var rollGrade = {
+//   props: ['roll'],
+//   methods: {
+//     calculatedScore: function() {
+//       score = 0.0;
+//       buffs = Object.values(this.roll).filter(el => el != null);
+//       buffs.forEach(el =>{
+//         if (!!/true-bearing/.exec(el)) score += 2;
+//         if (!!/shark-infested-waters/.exec(el)) score += 1.33;
+//         if (!!/grand-melee|jolly-roger|buried-treasure|broadsides/.exec(el)) score += 0.66;
+//       })
+      
+//       return score;
+//     }
+//   },
+//   computed: {
+//     gradedRoll: function() {
+//       score = this.calculatedScore();
+//       if (score >= 5.9) {
+//         grade = "perfect"; // Six buff
+//       } else if(score >= 2.66) {
+//         grade = "very-good"; // True-Bearing + another buff
+//       } else if(score >= 1.97) {
+//         grade = "good-enough"; // Bad three-buff or shark + one bad buff or single True-Bearing.
+//       } else if(score == 1.33) {
+//         grade = "maybe"; // Single shark
+//       } else {
+//         grade = "bad" ; // Bad one buffs, bad two buffs.
+//       }
+//       return grade;
+//     },
+//   },
+//   template: '<div>{{ gradedRoll }}</div>'
+// }
+
 var rollHistory = new Vue({
   el: '#roll-history',
   data: {
     rolls: [],
+    grades: [],
     counter: 0,
     audio: document.getElementById('rtb-audio'),
     disabled: false
@@ -41,8 +78,11 @@ var rollHistory = new Vue({
         this.audio.play();
         
         // Important data manipulation
-        this.rolls.unshift(this.generateRoll()); // Newest roll is at the beginning of rolls array.
+        userGeneratedRoll = this.generateRoll();
+        this.rolls.unshift(userGeneratedRoll); // Newest roll is at the beginning of rolls array.
+        this.grades.unshift(this.assignGrade(this.calculateScore(userGeneratedRoll)));
         this.rolls.splice(5); // Display only 5 rows.
+        this.grades.splice(5);
         this.counter += 1;
         
         // Cooldown on button
@@ -66,6 +106,32 @@ var rollHistory = new Vue({
         const mode = Math.max(...Object.values(histogram))
         return Object.keys(histogram).filter(el => histogram[el] == mode)
       },
+      calculateScore: function(roll) {
+        score = 0.0;
+        buffs = Object.values(roll).filter(el => el != null);
+        buffs.forEach(el =>{
+          if (!!/true-bearing/.exec(el)) score += 2;
+          if (!!/shark-infested-waters/.exec(el)) score += 1.33;
+          if (!!/grand-melee|jolly-roger|buried-treasure|broadsides/.exec(el)) score += 0.66;
+        })
+        
+        return score;
+      },
+      assignGrade: function(score) {
+        if (score >= 5.9) {
+          grade = "perfect"; // Six buff
+        } else if(score >= 2.66) {
+          grade = "very-good"; // True-Bearing + another buff
+        } else if(score >= 1.97) {
+          grade = "good-enough"; // Bad three-buff or shark + one bad buff or single True-Bearing.
+        } else if(score == 1.33) {
+          grade = "maybe"; // Single shark
+        } else {
+          grade = "bad" ; // Bad one buffs, bad two buffs.
+        }
+        
+        return grade;
+      },
       generateRoll: function() {
         let roll = {
           // The order of these properties determines the order they are displayed.
@@ -88,86 +154,4 @@ var rollHistory = new Vue({
       }
     },
 });
-
-          
-// const newRoll = () => BUFFS_ARRAY.map(element => BUFFS_ARRAY[Math.floor(Math.random() * BUFFS_ARRAY.length)])
-
-// Vue.component('buff-icon', {
-//   props: ['iconClass'],
-//   template: '<div>{{ }}</div>'
-// })
-
-// const frequencies = function findFrequencies(ary) {
-//   return ary.reduce((counter, item) => {
-//     let p = item;
-//     counter[p] = counter.hasOwnProperty(p) ? counter[p] + 1 : 1;
-//     return counter;
-//   }, {})
-// }
-
-// const modes = function findModes(histogram) {
-//   const mode = Math.max(...Object.values(histogram))
-//   return Object.keys(histogram).filter(el => histogram[el] == mode)
-// }
-
-// var formattedAsSnakeCase = function formatAsSnakeCase(str) {
-//   return str.split(" ").join("_").toLowerCase();
-// }
-
-// var formattedAsKebabCase = function formatAsKebabCase(arr) {
-//   return arr.map(element => {
-//     return element.split("_").join("-").toLowerCase();
-//   })
-// }
-
-// Vue.component('counter-display', {
-//   props: [counter],
-//   template: '<p>{{ counter }}</p>'
-// })
-
-// var modes = function findModes(histogram) {
-//   let ret = histogram
-//   let mode = Math.max(...Object.values(ret))
-
-//   Object.keys(ret).forEach(key => {
-//     if (ret[key] != mode) delete ret[key];
-//   });
-  
-//   return Object.keys(ret);
-// }
-
-// Vue.component('determine-buff-icon', {
-//   props: ['icon'],
-//   data: function() {
-//     return this.icon.replace(" ", "-").toLowerCase()
-//   }
-// })
-
-// Vue.component('button-rtb'), {
-//   template: '<button v-on:click="roll"></button>',
-//   data: {
-//     buffs: []
-//   },
-//   methods: {
-//     roll: function() {
-//       this.buffs = modes(frequencies(newRoll()))
-//     }
-//   }
-// }
-
-// var newRoll = function generateRolls() {
-//   let roll = [];
-//   BUFFS_ARRAY.forEach(buff => roll.push(BUFFS_ARRAY[Math.floor(Math.random() * BUFFS_ARRAY.length)]));
-//   return roll;
-// }
-
-// var newRoll = function generateRoll() {
-//   return BUFFS_ARRAY.map(element => BUFFS_ARRAY[Math.floor(Math.random() * BUFFS_ARRAY.length)])
-// }
-
-// var buffIcon = {
-//   props: ['iconClass'],
-//   template: '<div></div>'
-// }
  </script>
- <!--<buff-icon :iconClass="buff" :class="buff" class="buff-icon"></buff-icon>-->
