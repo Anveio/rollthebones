@@ -14,8 +14,8 @@
         <li v-for="buff in roll" class="buff-list-item"> 
           <div :class="buff" class="buff-icon"></div>
         </li>
+        <roll-grade :roll="roll"></roll-grade>
       </ul>
-      <div v-for="grade in grades">{{ grade }}</div>
     </div>
   </div>
 </div>
@@ -26,46 +26,46 @@ const BUFFS_ARRAY = ["Grand Melee", "Jolly Roger", "Buried Treasure", "Broadside
 const formatAsSnakeCase = (str) => str.split(/ |-/).join("_").toLowerCase();
 const formatAsKebabCase = (str) => str.split(/_| /).join("-").toLowerCase();
 
-// var rollGrade = {
-//   props: ['roll'],
-//   methods: {
-//     calculatedScore: function() {
-//       score = 0.0;
-//       buffs = Object.values(this.roll).filter(el => el != null);
-//       buffs.forEach(el =>{
-//         if (!!/true-bearing/.exec(el)) score += 2;
-//         if (!!/shark-infested-waters/.exec(el)) score += 1.33;
-//         if (!!/grand-melee|jolly-roger|buried-treasure|broadsides/.exec(el)) score += 0.66;
-//       })
+Vue.component('roll-grade', {
+  props: ['roll'],
+  methods: {
+    calculatedScore: function() {
+      score = 0.0;
+      buffs = Object.values(this.roll).filter(el => el != null);
+      buffs.map(el =>{
+        if (!!/true-bearing/.exec(el)) score += 2;
+        if (!!/shark-infested-waters/.exec(el)) score += 1.33;
+        if (!!/grand-melee|jolly-roger|buried-treasure|broadsides/.exec(el)) score += 0.66;
+      })
+      return score;
+    }
+  },
+  computed: {
+    gradedRoll: function() {
+      debugger;
+      score = this.calculatedScore();
+      if (score >= 5.9) {
+        grade = "perfect"; // Six buff
+      } else if(score >= 2.66) {
+        grade = "very-good"; // True-Bearing + another buff
+      } else if(score >= 1.97) {
+        grade = "good-enough"; // Bad three-buff or shark + one bad buff or single True-Bearing.
+      } else if(score == 1.33) {
+        grade = "maybe"; // Single shark
+      } else {
+        grade = "bad" ; // Bad one buffs, bad two buffs.
+      }
       
-//       return score;
-//     }
-//   },
-//   computed: {
-//     gradedRoll: function() {
-//       score = this.calculatedScore();
-//       if (score >= 5.9) {
-//         grade = "perfect"; // Six buff
-//       } else if(score >= 2.66) {
-//         grade = "very-good"; // True-Bearing + another buff
-//       } else if(score >= 1.97) {
-//         grade = "good-enough"; // Bad three-buff or shark + one bad buff or single True-Bearing.
-//       } else if(score == 1.33) {
-//         grade = "maybe"; // Single shark
-//       } else {
-//         grade = "bad" ; // Bad one buffs, bad two buffs.
-//       }
-//       return grade;
-//     },
-//   },
-//   template: '<div>{{ gradedRoll }}</div>'
-// }
+      return grade;
+    },
+  },
+  template: '<div class="grade-segment" :class="gradedRoll"></div>'
+})
 
 var rollHistory = new Vue({
   el: '#roll-history',
   data: {
     rolls: [],
-    grades: [],
     counter: 0,
     audio: document.getElementById('rtb-audio'),
     disabled: false
@@ -80,9 +80,7 @@ var rollHistory = new Vue({
         // Important data manipulation
         userGeneratedRoll = this.generateRoll();
         this.rolls.unshift(userGeneratedRoll); // Newest roll is at the beginning of rolls array.
-        this.grades.unshift(this.assignGrade(this.calculateScore(userGeneratedRoll)));
         this.rolls.splice(5); // Display only 5 rows.
-        this.grades.splice(5);
         this.counter += 1;
         
         // Cooldown on button
@@ -95,42 +93,16 @@ var rollHistory = new Vue({
         // Samples from BUFFS_ARRAY six times into a new array.
         return BUFFS_ARRAY.map(element => BUFFS_ARRAY[Math.floor(Math.random() * BUFFS_ARRAY.length)])
       },
-      findFrequencies: function(ary) {
+      generateHistogram: function(ary) {
         return ary.reduce((counter, item) => {
-        let p = item;
-        counter[p] = counter.hasOwnProperty(p) ? counter[p] + 1 : 1;
-        return counter;
+          let p = item;
+          counter[p] = counter.hasOwnProperty(p) ? counter[p] + 1 : 1;
+          return counter;
         }, {})
       },
       findModes: function(histogram) {
         const mode = Math.max(...Object.values(histogram))
         return Object.keys(histogram).filter(el => histogram[el] == mode)
-      },
-      calculateScore: function(roll) {
-        score = 0.0;
-        buffs = Object.values(roll).filter(el => el != null);
-        buffs.forEach(el =>{
-          if (!!/true-bearing/.exec(el)) score += 2;
-          if (!!/shark-infested-waters/.exec(el)) score += 1.33;
-          if (!!/grand-melee|jolly-roger|buried-treasure|broadsides/.exec(el)) score += 0.66;
-        })
-        
-        return score;
-      },
-      assignGrade: function(score) {
-        if (score >= 5.9) {
-          grade = "perfect"; // Six buff
-        } else if(score >= 2.66) {
-          grade = "very-good"; // True-Bearing + another buff
-        } else if(score >= 1.97) {
-          grade = "good-enough"; // Bad three-buff or shark + one bad buff or single True-Bearing.
-        } else if(score == 1.33) {
-          grade = "maybe"; // Single shark
-        } else {
-          grade = "bad" ; // Bad one buffs, bad two buffs.
-        }
-        
-        return grade;
       },
       generateRoll: function() {
         let roll = {
@@ -143,7 +115,7 @@ var rollHistory = new Vue({
           true_bearing: null
         }
         
-        let buffs = (this.findModes(this.findFrequencies(this.rawRoll())));
+        let buffs = (this.findModes(this.generateHistogram(this.rawRoll())));
         buffs = buffs.map(el => formatAsSnakeCase(el));
         
         // The value of the keys, if found, will become kebab case
