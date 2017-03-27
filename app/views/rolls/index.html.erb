@@ -12,7 +12,7 @@
     <div class='rolls-container'>
       <ul v-for="(roll, index) in rolls" class="roll-list" :id="index">
         <li v-for="buff in roll" class="buff-list-item"> 
-          <div :class="buff" class="buff-icon"></div>
+          <buff-icon :buff="buff"></buff-icon>
         </li>
         <roll-grade :roll="roll"></roll-grade>
       </ul>
@@ -25,6 +25,11 @@ const BUFFS_ARRAY = ["Grand Melee", "Jolly Roger", "Buried Treasure", "Broadside
 
 const formatAsSnakeCase = (str) => str.split(/ |-/).join("_").toLowerCase();
 const formatAsKebabCase = (str) => str.split(/_| /).join("-").toLowerCase();
+
+Vue.component('buff-icon', {
+  props: ['buff'],
+  template: '<div :class="buff" class="buff-icon"></div>'
+})
 
 Vue.component('roll-grade', {
   props: ['roll'],
@@ -42,7 +47,6 @@ Vue.component('roll-grade', {
   },
   computed: {
     gradedRoll: function() {
-      debugger;
       score = this.calculatedScore();
       if (score >= 5.9) {
         grade = "perfect"; // Six buff
@@ -78,8 +82,7 @@ var rollHistory = new Vue({
         this.audio.play();
         
         // Important data manipulation
-        userGeneratedRoll = this.generateRoll();
-        this.rolls.unshift(userGeneratedRoll); // Newest roll is at the beginning of rolls array.
+        this.rolls.unshift(this.generateRoll()); // Newest roll is at the beginning of rolls array.
         this.rolls.splice(5); // Display only 5 rows.
         this.counter += 1;
         
@@ -87,7 +90,7 @@ var rollHistory = new Vue({
         this.disabled = true;
         setTimeout(() => {
           this.disabled = false;
-        }, 1000)
+        }, 1250)
       },
       rawRoll: function() {
         // Samples from BUFFS_ARRAY six times into a new array.
