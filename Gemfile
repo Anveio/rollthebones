@@ -12,6 +12,7 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'vuejs-rails'
 gem 'lodash-rails'
+gem 'puma'
 
 group :development, :test do
   gem 'sqlite3', '1.3.11'
