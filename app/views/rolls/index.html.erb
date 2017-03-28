@@ -41,10 +41,6 @@ const BUFFS_ARRAY = ["Grand Melee", "Jolly Roger", "Buried Treasure", "Broadside
 const formatAsSnakeCase = (str) => str.split(/ |-/).join("_").toLowerCase();
 const formatAsKebabCase = (str) => str.split(/_| /).join("-").toLowerCase();
 
-// Vue.component('buff-icon', {
-//   props: ['buff'],
-//   template: '<div :class="buff" class="buff-icon"></div>'
-// })
 
 Vue.component('roll-grade', {
   props: ['roll'],
