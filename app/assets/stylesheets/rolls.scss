@@ -2,16 +2,6 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-.slide-fade-enter-active {
-  transition: all .3s ease;
-}
-.slide-fade-leave-active {
-  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-}
-.slide-fade-enter, .slide-fade-leave-to {
-  transform: translateX(10px);
-  opacity: 0;
-}
 
 .rolls-enter-active, .list-leave-active {
   transition: all 1s;
@@ -19,11 +9,6 @@
 .rolls-enter, .list-leave-to /* .list-leave-active for <2.1.8 */ {
   opacity: 0;
   transform: translateY(-30px);
-}
-
-
-.flip-list-move {
-  transition: transform 1s;
 }
 
 .roll-grade-panel {
