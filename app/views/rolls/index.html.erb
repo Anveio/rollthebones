@@ -19,23 +19,6 @@
 </div>
 
 <script>
-new Vue({
-  el: '#flip-list-demo',
-  data: {
-    items: [1,2,3,4,5,6,7,8,9]
-  },
-  methods: {
-    shuffle: function () {
-      this.items = _.shuffle(this.items)
-    },
-  }
-})
-
-Vue.component('random-num', {
-  props: ['num'],
-  template: '<li>{{ num }}</li>'
-})
-
 const BUFFS_ARRAY = ["Grand Melee", "Jolly Roger", "Buried Treasure", "Broadsides", "Shark Infested Waters", "True Bearing"]
 
 const formatAsSnakeCase = (str) => str.split(/ |-/).join("_").toLowerCase();
