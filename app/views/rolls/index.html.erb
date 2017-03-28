@@ -1,6 +1,6 @@
 <section class="jumbotron">
   <div class="flex-container">
-    <h1 id="site-title">Roll the Bones</h1>
+    <h1 id="site-title">Roll the Bones (ALPHA)</h1>
   </div>
 </section>
 
@@ -9,42 +9,45 @@
     <div class='button-container'>
       <button class="rtb-button" v-on:click="addBuff" :disabled="disabled"><audio src="/audios/roll_the_bones.ogg" id="rtb-audio"></audio></button>
     </div>
-    <div class='rolls-container'>
-      <ul v-for="(roll, index) in rolls" class="roll-list" :id="index">
-        <li v-for="buff in roll" class="buff-list-item"> 
-          <buff-icon :buff="buff"></buff-icon>
-        </li>
+    <transition-group name="rolls" tag="div" class='rolls-container'>
+      <ul v-for="(roll, index) in rolls" class="roll-list" :id="index" :key="roll">
+        <li v-for="buff in roll"  :class="buff" class="buff-list-item" :key="buff"></li>
         <roll-grade :roll="roll"></roll-grade>
       </ul>
-    </div>
+    </transition-group>
   </div>
 </div>
 
 <script>
+new Vue({
+  el: '#flip-list-demo',
+  data: {
+    items: [1,2,3,4,5,6,7,8,9]
+  },
+  methods: {
+    shuffle: function () {
+      this.items = _.shuffle(this.items)
+    },
+  }
+})
+
+Vue.component('random-num', {
+  props: ['num'],
+  template: '<li>{{ num }}</li>'
+})
+
 const BUFFS_ARRAY = ["Grand Melee", "Jolly Roger", "Buried Treasure", "Broadsides", "Shark Infested Waters", "True Bearing"]
 
 const formatAsSnakeCase = (str) => str.split(/ |-/).join("_").toLowerCase();
 const formatAsKebabCase = (str) => str.split(/_| /).join("-").toLowerCase();
 
-Vue.component('buff-icon', {
-  props: ['buff'],
-  template: '<div :class="buff" class="buff-icon"></div>'
-})
+// Vue.component('buff-icon', {
+//   props: ['buff'],
+//   template: '<div :class="buff" class="buff-icon"></div>'
+// })
 
 Vue.component('roll-grade', {
   props: ['roll'],
-  methods: {
-    calculatedScore: function() {
-      score = 0.0;
-      buffs = Object.values(this.roll).filter(el => el != null);
-      buffs.map(el =>{
-        if (!!/true-bearing/.exec(el)) score += 2;
-        if (!!/shark-infested-waters/.exec(el)) score += 1.33;
-        if (!!/grand-melee|jolly-roger|buried-treasure|broadsides/.exec(el)) score += 0.66;
-      })
-      return score;
-    }
-  },
   computed: {
     gradedRoll: function() {
       score = this.calculatedScore();
@@ -62,6 +65,18 @@ Vue.component('roll-grade', {
       
       return grade;
     },
+  },
+  methods: {
+    calculatedScore: function() {
+      score = 0.0;
+      buffs = Object.values(this.roll).filter(el => el != null);
+      buffs.map(el =>{
+        if (!!/true-bearing/.exec(el)) score += 2;
+        if (!!/shark-infested-waters/.exec(el)) score += 1.33;
+        if (!!/grand-melee|jolly-roger|buried-treasure|broadsides/.exec(el)) score += 0.66;
+      })
+      return score;
+    }
   },
   template: '<div class="grade-segment" :class="gradedRoll"></div>'
 })
@@ -130,3 +145,4 @@ var rollHistory = new Vue({
     },
 });
  </script>
+ 
