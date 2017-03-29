@@ -60,6 +60,11 @@ body {
   min-width: 340px;
 }
 
+.roll-grade-panel {
+  width: 15px;
+  background-color: green;
+}
+
 .button-container {
   display: flex;
   justify-content: center;
@@ -131,7 +136,7 @@ h1 {
 .buff-list-item {
     width: 50px;
     height: 50px;
-    object-fit: fill;
+    object-fit: fill !important;
     justify-content: space-between;
     list-style-type: none;
     margin: 0 5px 0 0;
@@ -144,13 +149,14 @@ h1 {
     margin-right: 0;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 500px) {
   .flex-container {
     padding-bottom: 25px;
   }
   .buff-list-item {
     width: 35px;
     height: 35px;
+    object-fit: fill;
   }
   .grade-segment {
     height: 35px;
@@ -159,8 +165,8 @@ h1 {
     min-width: 200px;
     margin-bottom: 20px;
   }
-  h1 {
-    font-size: 35px !important;
+  #site-title {
+    font-size: 35px;
   }
   .rtb-button {
     width: 65px;
@@ -171,33 +177,33 @@ h1 {
 
 .broadsides {
     opacity: 1;
-    background: url('broadsides.jpg') center;
+    background: url('broadsides.jpg') center no-repeat;
 }
 
 .buried-treasure {
     opacity: 1;
-    background: url('buried_treasure.jpg') center;
+    background: url('buried_treasure.jpg') center no-repeat;
 }
 .grand-melee {
     opacity: 1;
-    background: url('grand_melee.jpg') center;
+    background: url('grand_melee.jpg') center no-repeat;
 }
 .jolly-roger {
     opacity: 1;
-    background: url('jolly_roger.jpg') center;
+    background: url('jolly_roger.jpg') center no-repeat;
 }
 .shark-infested-waters {
     opacity: 1;
-    background: url('shark_infested_waters.jpg') center;
+    background: url('shark_infested_waters.jpg') center no-repeat;
 }
 .true-bearing {
     opacity: 1;
-    background: url('true_bearing.jpg') center;
+    background: url('true_bearing.jpg') center no-repeat;
 }
 
 // Animations 
 
-.rolls-enter-active, .rolls-leave-active {
+.rolls-enter-active{
   transition: all 1s;
 }
 
@@ -206,19 +212,12 @@ h1 {
   transform: translateY(-30px);
 }
 
+.rolls-leave-to {
+  opacity: 0;
+}
+
 .rolls-move {
   transition: transform 1s;
 }
 
-.roll-grade-panel {
-  width: 15px;
-  background-color: green;
-}
 
-.roll-list-enter-active, .roll-list-leave-active {
-  transition: all 1s;
-}
-
-.roll-list-enter, .roll-list-leave-to {
-  transform: translateY(-30px);
-}
