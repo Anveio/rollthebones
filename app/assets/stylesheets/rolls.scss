@@ -2,39 +2,38 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-
-.rolls-enter-active, .rolls-leave-active {
-  transition: all 1s;
+body {
+  padding: 0;
+  margin: 0;
 }
 
-.rolls-enter{
-  opacity: 0;
-  transform: translateY(-30px);
+.jumbotron {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  color: #fff;
 }
 
-.rolls-move {
-  transition: transform 1s;
-}
-
-.roll-grade-panel {
-  width: 15px;
-  background-color: green;
-}
-
-.roll-list-enter-active, .roll-list-leave-active {
-  transition: all 1s;
-}
-
-.roll-list-enter, .roll-list-leave-to {
-  transform: translateY(-30px);
+#site-title {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 900;
+  font-size: 80px;
+  text-align: center;
+  color: #fff;
+  margin: 0;
+  padding: 0;
 }
 
 .flex-container {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   padding-bottom: 50px;
   background-color: grey;
+  margin: auto;
   flex: 1;
 }
 
@@ -56,12 +55,9 @@
   align-items: center;
   justify-content: space-between;
   list-style-type: none;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
   padding: 0;
   margin: 0 0 40px 0;
+  min-width: 340px;
 }
 
 .button-container {
@@ -92,31 +88,10 @@
   }
 }
 
-.jumbotron {
-    display: flex;
-    align-items: center;
-    background-size: cover;
-    color: #fff;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-#site-title {
-  font-family: 'Source Sans Pro', sans-serif;
-  font-weight: 900;
-  font-size: 80px;
-  text-align: center;
-  color: #fff;
-  margin: 0;
-  padding: 0;
-}
 
 /* Typography */
 h1 {
-  font-size: 3em;
   letter-spacing: -2px;
-  margin-bottom: 30px;
   text-align: center;
 }
 
@@ -156,6 +131,7 @@ h1 {
 .buff-list-item {
     width: 50px;
     height: 50px;
+    object-fit: fill;
     justify-content: space-between;
     list-style-type: none;
     margin: 0 5px 0 0;
@@ -163,8 +139,34 @@ h1 {
     // Default values
     opacity: 0.1;
     background-color: black;
+    background-size: cover;
 }.buff-list-item:last-child {
     margin-right: 0;
+}
+
+@media (max-width: 600px) {
+  .flex-container {
+    padding-bottom: 25px;
+  }
+  .buff-list-item {
+    width: 35px;
+    height: 35px;
+  }
+  .grade-segment {
+    height: 35px;
+  }
+  .roll-list {
+    min-width: 200px;
+    margin-bottom: 20px;
+  }
+  h1 {
+    font-size: 35px !important;
+  }
+  .rtb-button {
+    width: 65px;
+    height: 65px;
+    margin-bottom: 25px;
+  }
 }
 
 .broadsides {
@@ -191,4 +193,32 @@ h1 {
 .true-bearing {
     opacity: 1;
     background: url('true_bearing.jpg') center;
+}
+
+// Animations 
+
+.rolls-enter-active, .rolls-leave-active {
+  transition: all 1s;
+}
+
+.rolls-enter{
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+.rolls-move {
+  transition: transform 1s;
+}
+
+.roll-grade-panel {
+  width: 15px;
+  background-color: green;
+}
+
+.roll-list-enter-active, .roll-list-leave-active {
+  transition: all 1s;
+}
+
+.roll-list-enter, .roll-list-leave-to {
+  transform: translateY(-30px);
 }
