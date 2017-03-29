@@ -32,10 +32,12 @@ Vue.component('roll-grade', {
       score = this.calculatedScore();
       if (score >= 5.9) {
         grade = "perfect"; // Six buff
+      } else if(score >= 3.98) {
+        grade = "extremely-good"; // True-bearing + Shark + one other buff
       } else if(score >= 2.66) {
-        grade = "very-good"; // True-Bearing + another buff
+        grade = "very-good"; // True-earing + another buff
       } else if(score >= 1.97) {
-        grade = "good-enough"; // Bad three-buff or shark + one bad buff or single True-Bearing.
+        grade = "good-enough"; // Bad three-buff or shark + one bad buff or single True-bearing.
       } else if(score == 1.33) {
         grade = "maybe"; // Single shark
       } else {
